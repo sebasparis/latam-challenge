@@ -36,10 +36,19 @@ This comes at the cost of greater model complexity and computational cost, both 
 ## Part 2
 
 ### Changelog
+- Completed api.py
 - Updated fastapi~=0.86.0 -> fastapi~=0.141.0
 - Updated pydantic~=1.10.2 -> pydantic~=2.11.0
 - Updated uvicorn~=0.15.0 -> uvicorn~=0.35.0
 - Added httpx2~=2.12.0
 
 ## Part 3
+
+### Changelog
+
+- Created Dockerfile
+- Stored image in Google Artifact Registry and deployed using Google Cloud Run.
+- Added service URL to stress tests.
+- Updated locust~=1.6 -> locust~=2.46.0
+
 ## Part 4
