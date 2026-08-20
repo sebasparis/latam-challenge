@@ -26,8 +26,8 @@ jobs:
 
       # 4. Run model tests
       - name: Run tests
-        run: make test-model
+        run: make model-test
       
       # 5. Run API tests
       - name: Run API tests
-        run: make test-api
+        run: make api-test
