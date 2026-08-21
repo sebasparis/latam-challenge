@@ -1,0 +1,33 @@
+name: 'Continuous Integration'
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Get the repository
+      - uses: actions/checkout@v4
+
+      # 2. Install the Python version used by the project
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # 3. Install project dependencies
+      - name: Install dependencies
+        run: make install
+
+      # 4. Run model tests
+      - name: Run tests
+        run: make model-test
+      
+      # 5. Run API tests
+      - name: Run API tests
+        run: make api-test
