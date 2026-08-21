@@ -1,7 +1,9 @@
 name: 'Continuous Delivery'
+
 on:
   workflow_run:
-    workflows: ["Continuous Integration"]
+    workflows:
+      - Continuous Integration
     types:
       - completed
     branches:
@@ -10,18 +12,57 @@ on:
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       id-token: write
 
+    env:
+      PROJECT_ID: latam-challenge-506113
+      REGION: southamerica-east1
+      REPOSITORY: latam-challenge
+      IMAGE: latam-api
+      SERVICE: latam-api
+
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
       - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: projects/1052423921685/locations/global/workloadIdentityPools/github-actions/providers/github
           service_account: github-deployer@latam-challenge-506113.iam.gserviceaccount.com
 
-      - name: Verify authentication
-        run: gcloud auth list
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker authentication
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - name: Build Docker image
+        run: |
+          IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}"
+          docker build \
+            -t "${IMAGE_URI}:${{ github.event.workflow_run.head_sha }}" \
+            .
+
+      - name: Push Docker image
+        run: |
+          IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}"
+          docker push \
+            "${IMAGE_URI}:${{ github.event.workflow_run.head_sha }}"
+
+      - name: Deploy to Cloud Run
+        run: |
+          IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${IMAGE}"
+          gcloud run deploy "${SERVICE}" \
+            --image "${IMAGE_URI}:${{ github.event.workflow_run.head_sha }}" \
+            --region "${REGION}" \
+            --port 8000 \
+            --project "${PROJECT_ID}" \
+            --quiet

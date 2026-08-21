@@ -9,8 +9,17 @@ The branch history of the corresponding repository should be pretty descriptive 
 
 # Project Structure
 
-TODO: complete
+This project implements an end-to-end machine learning API for flight-delay prediction. The repository contains the model implementation and supporting data-processing code, a FastAPI application exposing the model through HTTP endpoints, automated unit and API tests, and Docker configuration for packaging the application and its runtime dependencies.
 
+The development workflow is managed through Git and GitHub using a Gitflow-style branch structure, with feature branches integrated into develop through pull requests. GitHub Actions provides the CI/CD pipeline: CI automatically installs the project dependencies and executes the test suite, while CD is triggered after successful CI on develop.
+
+For deployment, the API and model are packaged as a Docker image and stored in Google Artifact Registry. The image is then automatically deployed to Google Cloud Run, which runs the containerized FastAPI service and exposes it through a public HTTPS endpoint. Authentication between GitHub Actions and Google Cloud is implemented using Workload Identity Federation, avoiding long-lived GCP credentials in the repository.
+
+The repository follows a Gitflow-style branching structure. The main branch contains code considered ready for final review and delivery, while develop contains the latest integrated and tested development code. Individual changes are developed in separate feature/ branches, such as feature/part1, feature/part2, etc. Once a feature is completed and its CI checks pass, it is integrated into develop through a pull request.
+
+# API URL
+
+https://latam-api-1052423921685.southamerica-east1.run.app
 
 # Step-by-step resolution
 
@@ -47,8 +56,11 @@ This comes at the cost of greater model complexity and computational cost, both 
 ### Changelog
 
 - Created Dockerfile
-- Stored image in Google Artifact Registry and deployed using Google Cloud Run.
+- Deployed service as a Docker image in Google Cloud Run.
 - Added service URL to stress tests.
 - Updated locust~=1.6 -> locust~=2.46.0
 
 ## Part 4
+
+- Completed ci.yml
+- Completed cd.yml
