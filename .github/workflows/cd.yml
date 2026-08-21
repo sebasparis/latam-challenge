@@ -1,7 +1,12 @@
 name: 'Continuous Delivery'
 
 on:
-  ...
+  workflow_dispatch:
 
 jobs:
-  ...
+  placeholder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: CD not implemented yet
+        run: echo "CD workflow placeholder - deployment not implemented yet"
