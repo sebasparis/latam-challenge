@@ -20,8 +20,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: YOUR_PROVIDER_RESOURCE_NAME
-          service_account: YOUR_SERVICE_ACCOUNT_EMAIL
+          workload_identity_provider: projects/1052423921685/locations/global/workloadIdentityPools/github-actions/providers/github
+          service_account: github-deployer@latam-challenge-506113.iam.gserviceaccount.com
 
       - name: Verify authentication
         run: gcloud auth list
